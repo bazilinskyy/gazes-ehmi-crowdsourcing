@@ -314,6 +314,7 @@ if (group_choice == 1) {
         console.log(i, image_stimuli[i]);
         // don't add the between block after the last trial
 		if (i % n_images_break == 0 && i / n_images_break != 1) {
+			console.log('added break', i, between_blocks[between_blocks_count], i % n_images_break, i / n_images_break);
 		    timeline.push(between_blocks[between_blocks_count]);
 		    between_blocks_count++;
 		}   
