@@ -223,7 +223,7 @@ if (group_choice == 1) {
         timeline.push(codechart_input_block);
         console.log(i, video_stimuli[i]);
 	    // don't add the between block after the last trial
-		if (i % n_videos_break == 0 && i / n_videos_break != 1 && i != 0) {
+		if (i % n_videos_break == 0 && i != 0) {
 			console.log('added break', i, between_blocks[between_blocks_count], i % n_videos_break, i / n_videos_break);
 		    timeline.push(between_blocks[between_blocks_count]);
 		    between_blocks_count++;
@@ -314,7 +314,7 @@ if (group_choice == 1) {
         timeline.push(codechart_input_block);
         console.log(i, image_stimuli[i]);
         // don't add the between block after the last trial
-		if (i % n_images_break == 0 && i / n_images_break != 1 && i != 0) {
+		if (i % n_images_break == 0 && i != 0) {
 			console.log('added break', i, between_blocks[between_blocks_count], i % n_images_break, i / n_images_break);
 		    timeline.push(between_blocks[between_blocks_count]);
 		    between_blocks_count++;
