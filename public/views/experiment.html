@@ -146,12 +146,7 @@ if (group_choice == 1) {
 	var instructions_block = {
 	    type: 'html-keyboard-response',
 	    stimulus: '<p>You will view 12 videos. After an a video, you will be asked to input a code seen on the codechart shown right after the video or image. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
-	    choices: ['C'],
-	    on_finish: function(data) {
-            jsPsych.data.addDataToLastTrial({
-                worker_code: finish_code
-            });
-        }
+	    choices: ['C']
 	};
 	// populate array with video IDs
 	for (var i = 1; i <= n_videos; i++) {
@@ -254,6 +249,11 @@ if (group_choice == 1) {
 	    type: 'html-keyboard-response',
 	    stimulus: '<p>You will view 12 images. After an image, you will be asked to input a code seen on the codechart shown right after the video or image. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
 	    choices: ['C'],
+	    on_finish: function(data) {
+            jsPsych.data.addDataToLastTrial({
+                worker_code: finish_code
+            });
+        }
 	};
 	// populate arrays with image IDs
 	for (var i = 1; i <= n_images * n_images_repeat; i++) {
@@ -293,7 +293,7 @@ if (group_choice == 1) {
 	var timeline = [];
 	timeline.push(instructions_block);
 	// iterate over images
-	for (var i = 0; i <= Math.floor(n_videos * n_images_repeat / n_videos_per_block); i++) {
+	for (var i = 0; i <= Math.floor(n_videos * n_images_repeat); i++) {
 	    // iterate over videos per block
         if (i >= n_images * n_images_repeat) {  // check if the last video was reached
             break;
