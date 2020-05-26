@@ -195,7 +195,7 @@ if (group_choice == 1) {
 	    })
 	}
 	// build between blocks
-	for (var i = 1; i < n_videos * n_videos_repeat / n_videos_break - 1; i++) {
+	for (var i = 1; i < n_videos * n_videos_repeat / n_videos_break; i++) {
 	    var videos_done = n_videos_break * i;
 	    between_blocks.push({
 	        type: 'html-keyboard-response',
@@ -280,7 +280,7 @@ if (group_choice == 1) {
 	    })
 	}
 	// build between blocks
-	for (var i = 1; i < n_images * n_images_repeat / n_images_break - 1; i++) {
+	for (var i = 1; i < n_images * n_images_repeat / n_images_break; i++) {
 	    var images_done = n_images_break * i;
 	    between_blocks.push({
 	        type: 'html-keyboard-response',
