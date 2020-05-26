@@ -215,7 +215,7 @@ if (group_choice == 1) {
             break;
         }
         // add the continue page before all videos except for the 1st one and not after a break
-    	(i != 0 && i % n_videos_break != 0)
+    	if (i != 0 && i % n_videos_break != 0) {
 	    	timeline.push(continue_block);
 	    }
         timeline.push(video_stimuli[i]);  // page with the stimulus
