@@ -142,7 +142,7 @@ if (group_choice == 1) {
 	// define instructions block
 	var instructions_block = {
 	    type: 'html-keyboard-response',
-	    stimulus: '<p>You will view 12 videos. After an a video, you will be asked to input a code seen on the codechart shown right after the video. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
+	    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' videos. After each video, you will be asked to input a code seen on the codechart shown right after the video. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
 	    choices: ['C'],
         on_finish: function(data) {
             jsPsych.data.addDataToLastTrial({
@@ -237,7 +237,7 @@ if (group_choice == 1) {
 	// define instructions block
 	var instructions_block = {
 	    type: 'html-keyboard-response',
-	    stimulus: '<p>You will view 12 images. After an image, you will be asked to input a code seen on the codechart shown right after the image. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
+	    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' images. After each image, you will be asked to input a code seen on the codechart shown right after the image. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
 	    choices: ['C'],
 	    on_finish: function(data) {
             jsPsych.data.addDataToLastTrial({
