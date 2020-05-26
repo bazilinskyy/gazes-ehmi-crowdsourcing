@@ -155,21 +155,20 @@ if (group_choice == 1) {
 			video_ids.push(i);
 		}
 	}
-	video_ids = shuffle(video_ids);
+	video_ids = shuffle(video_ids);  // shuffle IDs
 	console.log('video_ids ', video_ids);
 	// build array with videos with stimuli
-	for (var i = 0; i < n_videos; i++) {
-		for (var j = 1; j <= n_videos_repeat; j++) { 
-		    video_stimuli.push({
-		        type: 'video-keyboard-response',
-		        autoplay: true,
-		        controls: false,
-		        width: 1280,
-		        height: 720,
-		        choices: jsPsych.NO_KEYS,
-		        sources: [video_prefix + video_ids[i] + '.mp4']
-		    });
-		}
+	for (var i = 0; i < n_videos * n_videos_repeat; i++) {
+	    video_stimuli.push({
+	        type: 'video-keyboard-response',
+	        autoplay: true,
+	        controls: false,
+	        width: 1280,
+	        height: 720,
+	        choices: jsPsych.NO_KEYS,
+	        sources: [video_prefix + video_ids[i] + '.mp4'],
+	        trial_ends_after_video: true
+	    });
 	}
 	// black with text to continue before showing the image
 	var continue_block = {
@@ -252,6 +251,7 @@ if (group_choice == 1) {
 		    image_ids.push(i);
 		}
 	}
+	image_ids = shuffle(image_ids);  // shuffle IDs
 	console.log('image_ids ', image_ids);
 	// build array with images with stimuli
 	for (var i = 0; i < n_images * n_images_repeat; i++) {
