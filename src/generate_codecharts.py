@@ -174,7 +174,7 @@ def create_codechart(filename, image_width, image_height):
 if __name__ == "__main__":
     # create some code charts to test this code
     rootdir = '../public/img/codeboard'
-    num_codecharts = 100  # generate this many codecharts
+    num_codecharts = 400  # generate this many codecharts
 
     # 720p
     image_width = 1280  # in pixel
