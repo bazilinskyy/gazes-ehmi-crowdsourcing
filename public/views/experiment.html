@@ -141,7 +141,7 @@ if (group_choice == 1) {
 	// define instructions block
 	var instructions_block = {
 	    type: 'html-keyboard-response',
-	    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' videos. After each video, you will be asked to input a code seen on the codechart shown right after the video. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
+	    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' videos. After each video, you will be asked to input a code seen on the codechart shown right after the video. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). After each 10 videos you will be able to take a short break. Press \'C\' to proceed to the image. </p>',
 	    choices: ['C'],
         on_finish: function(data) {
             jsPsych.data.addDataToLastTrial({
@@ -176,12 +176,6 @@ if (group_choice == 1) {
 	    type: 'html-keyboard-response',
 	    stimulus: '<p>Press \'C\' to continue to the next video.</p>',
 	    choices: ['C']
-	};
-	// black with image to be added before each video
-	var image_block = {
-	    type: 'html-keyboard-response',
-	    stimulus: '<img src=\'' + image_prefix + 'black_frame.png\'/>',
-	    choices: ['F'],
 	};
 	// gazes
 	// build array with codecharts
@@ -220,7 +214,6 @@ if (group_choice == 1) {
     	if (i != 0) {
 	    	timeline.push(continue_block);
 	    }
-        timeline.push(image_block);  // page with an image asking to press the key
         timeline.push(video_stimuli[i]);  // page with the stimulus
         // gaze
         timeline.push(codechart_stimuli[i]);
@@ -245,7 +238,7 @@ if (group_choice == 1) {
 	// define instructions block
 	var instructions_block = {
 	    type: 'html-keyboard-response',
-	    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' images. After each image, you will be asked to input a code seen on the codechart shown right after the image. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
+	    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' images. Each image will be shown for 3 seconds. After each image, you will be asked to input a code seen on the codechart shown right after the image. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). After each 10 videos you will be able to take a short break. Press \'C\' to proceed to the image. </p>',
 	    choices: ['C'],
 	    on_finish: function(data) {
             jsPsych.data.addDataToLastTrial({
