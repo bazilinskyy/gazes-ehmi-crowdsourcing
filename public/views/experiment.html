@@ -5,13 +5,10 @@
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
     <script src='jsPsych/jspsych.js'></script>
     <script src='jsPsych/plugins/jspsych-html-keyboard-response.js'></script>
-    <script src='jsPsych/plugins/jspsych-video-keyboard-multiple-responses-release.js'></script>
+    <script src='jsPsych/plugins/jspsych-jspsych-video-keyboard-response.js'></script>
     <script src='jsPsych/plugins/jspsych-call-function.js'></script>
-    <script src='jsPsych/plugins/jspsych-html-slider-response.js'></script>
     <script src='jsPsych/plugins/jspsych-video-keyboard-response.js'></script>
     <script src='jsPsych/plugins/jspsych-survey-html-form.js'></script>
-    <script src='jsPsych/plugins/jspsych-survey-html-form-ranking.js'></script>
-    <script src='jsPsych/plugins/jspsych-survey-html-form-slider.js'></script>
     <script src='jsPsych/plugins/jspsych-image-keyboard-response.js'></script>
     <link href='jsPsych/css/jspsych.css' rel='stylesheet' type='text/css'></link>
     <link href='css/experiment.css' rel='stylesheet' type='text/css'></link>
@@ -33,12 +30,12 @@
 /**
  * Constants.
  **/
-var n_images = 12; // number of images
-var n_videos = 12; // number of videos
-var n_videos_repeat = 1; // number of repeats of each condition
-var n_images_repeat = 1; // number of repeats of each condition
-var n_videos_per_block = 5; // number of videos in each block
-var n_break = 5; // number of videos between each break
+var n_images = 24; // number of images
+var n_videos = 24; // number of videos
+var n_videos_repeat = 2; // number of repeats of each condition
+var n_images_repeat = 2; // number of repeats of each condition
+var n_videos_break = 10; // number of videos between each break
+var n_images_break = 10; // number of images between each break
 var n_codeblocks = 100; // number of codeblock images generated
 var video_prefix = 'videos/video_'; // prefix for videos
 var image_prefix = 'img/'; // prefix for images
@@ -137,8 +134,6 @@ var save_data_block = {
     }
 }
 
-var fs = require('fs');  // to read files
-
 /**
  * Blocks unique for videos or images.
  **/
@@ -148,34 +143,31 @@ if (group_choice == 1) {
 	var instructions_block = {
 	    type: 'html-keyboard-response',
 	    stimulus: '<p>You will view 12 videos. After an a video, you will be asked to input a code seen on the codechart shown right after the video. The field will only accept input in correct format of \'LetterDigitDigit\' (e.g. \'F32\'). Press \'C\' to proceed to the image. </p>',
-	    choices: ['C']
+	    choices: ['C'],
+        on_finish: function(data) {
+            jsPsych.data.addDataToLastTrial({
+                worker_code: finish_code
+            });
+        }
 	};
 	// populate array with video IDs
-	// for (var i = 1; i <= n_videos; i++) {
-	// 	for (var j = 0; j < n_videos_repeat; j++) {
-	// 		video_ids.push(i);
-	// 	}
-	// }
-
-	var video_files = fs.readdirSync('/stimuli/videos/');
-	console.log('videos ', video_files);
-	video_files = shuffle(video_files);
+	for (var i = 1; i <= n_videos; i++) {
+		for (var j = 0; j < n_videos_repeat; j++) {
+			video_ids.push(i);
+		}
+	}
+	video_ids = shuffle(video_ids);
+	console.log('video_ids ', video_ids);
 	// build array with videos with stimuli
 	for (var i = 0; i < n_videos * n_videos_repeat; i++) {
 	    video_stimuli.push({
-	        type: 'video-keyboard-multiple-responses-release',
+	        type: 'video-keyboard-response',
 	        autoplay: true,
 	        controls: false,
 	        width: 1280,
 	        height: 720,
-	        choices: ['F'],
-	        sources: [video_files[i]],
-	        prompt: '<p>Press and HOLD \'F\' when you feel safe to cross.</p>',
-	        on_finish: function(data) {
-	            jsPsych.data.addDataToLastTrial({
-	                worker_code: finish_code
-	            });
-	        }
+	        choices: jsPsych.NO_KEYS,
+	        sources: [video_prefix + video_ids[i] + '.mp4']
 	    });
 	}
 	// black with text to continue before showing the image
@@ -187,7 +179,7 @@ if (group_choice == 1) {
 	// black with image to be added before each video
 	var image_block = {
 	    type: 'html-keyboard-response',
-	    stimulus: '<img src=\'' + image_prefix + 'black_frame.png\'/><p>Press and HOLD \'F\' when you feel safe to cross.</p>',
+	    stimulus: '<img src=\'' + image_prefix + 'black_frame.png\'/>',
 	    choices: ['F'],
 	};
 	// gazes
@@ -202,7 +194,7 @@ if (group_choice == 1) {
 	    })
 	}
 	// build between blocks
-	for (var i = 1; i <= n_videos * n_videos_repeat / n_videos_per_block - 1; i++) {
+	for (var i = 1; i <= n_videos * n_videos_repeat / n_videos_break - 1; i++) {
 	    var videos_done = n_videos_per_block * i;
 	    between_blocks.push({
 	        type: 'html-keyboard-response',
@@ -217,30 +209,24 @@ if (group_choice == 1) {
 	var timeline = [];
 	timeline.push(instructions_block);
 	// iterate over blocks
-	for (var i = 0; i <= Math.floor(n_videos * n_videos_repeat / n_videos_per_block); i++) {
-	    // iterate over videos per block
-	    for (var j = 0; j < n_videos_per_block; j++) {
-	        if (i * n_videos_per_block + j >= n_videos * n_videos_repeat) {  // check if the last video was reached
-	            break;
-	        }
-	        // add the continue page before all videos except for the 1st one
-	    	if (j != 0) {
-		    	timeline.push(continue_block);
-		    }
-	        timeline.push(image_block);  // page with an image asking to press the key
-	        timeline.push(video_stimuli[i * n_videos_per_block + j]);  // page with the stimulus
-	        // gaze
-	        timeline.push(codechart_stimuli[i * n_videos_per_block + j]);
-	        timeline.push(codechart_input_block);
-	        console.log(i, j, i * n_videos_per_block + j, video_stimuli[i * n_videos_per_block + j]);
+	for (var i = 0; i <= n_videos * n_videos_repeat; i++) {
+        // add the continue page before all videos except for the 1st one
+    	if (j != 0) {
+	    	timeline.push(continue_block);
 	    }
-	    // save data
-	    timeline.push(save_data_block);
+        timeline.push(image_block);  // page with an image asking to press the key
+        timeline.push(video_stimuli[i]);  // page with the stimulus
+        // gaze
+        timeline.push(codechart_stimuli[i]);
+        timeline.push(codechart_input_block);
+        console.log(i, video_stimuli[i]);
 	    // don't add the between block after the last trial
-	    if (i != 1 && i % 2 == 1) {
+		if (i % n_videos_break == 0 && i / n_videos_break != 1) {
 		    timeline.push(between_blocks[i]);
 		}
 	}
+    // save data
+    timeline.push(save_data_block);
 	console.log(video_ids);
 	console.log(between_blocks);
 	console.log(video_stimuli);
@@ -259,18 +245,16 @@ if (group_choice == 1) {
             });
         }
 	};
-	// // populate arrays with image IDs
-	// for (var i = 1; i <= n_images * n_images_repeat; i++) {
-	//     image_ids.push(i);
-	// }
-	var image_files = fs.readdirSync('/stimuli/videos/');
-	console.log('videos ', image_files);
-	image_files = shuffle(image_files);
+	// populate arrays with image IDs
+	for (var i = 1; i <= n_images * n_images_repeat; i++) {
+	    image_ids.push(i);
+	}
+	console.log('image_ids ', image_ids);
 	// build array with images with stimuli
 	for (var i = 0; i < n_images * n_images_repeat; i++) {
 	    image_stimuli.push({
 	        type: 'image-keyboard-response',
-		    stimulus: [image_files[i]],
+		    stimulus: [image_prefix + 'stimuli/image_' + image_ids[i] + '.jpg'],
 		    choices: jsPsych.NO_KEYS,
 		    trial_duration: 3000
 	    });
@@ -292,6 +276,15 @@ if (group_choice == 1) {
 	        trial_duration: 400
 	    })
 	}
+	// build between blocks
+	for (var i = 1; i <= n_images * n_images_repeat / n_images_break - 1; i++) {
+	    var images_done = n_images_break * i;
+	    between_blocks.push({
+	        type: 'html-keyboard-response',
+	        stimulus: '<p>You have now completed ' + images_done + ' images out of ' + n_images * n_images_repeat + '. When ready press \'C\' to proceed to the next batch.</p>',
+	        choices: ['C']
+	    });
+	}
 
 	/**
  	* Create experiment timeline array
@@ -299,7 +292,7 @@ if (group_choice == 1) {
 	var timeline = [];
 	timeline.push(instructions_block);
 	// iterate over images
-	for (var i = 0; i <= Math.floor(n_videos * n_images_repeat); i++) {
+	for (var i = 0; i <= n_images * n_images_repeat; i++) {
 	    // iterate over videos per block
         if (i >= n_images * n_images_repeat) {  // check if the last video was reached
             break;
@@ -313,7 +306,10 @@ if (group_choice == 1) {
         timeline.push(codechart_stimuli[i]);
         timeline.push(codechart_input_block);
         console.log(i, image_stimuli[i]);
-	    
+        // don't add the between block after the last trial
+		if (i % n_images_break == 0 && i / n_images_break != 1) {
+		    timeline.push(between_blocks[i]);
+		}   
 	}
 	// save data
 	timeline.push(save_data_block);
