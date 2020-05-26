@@ -215,7 +215,7 @@ if (group_choice == 1) {
             break;
         }
         // add the continue page before all videos except for the 1st one and not after a break
-    	if (i != 0 && (i % n_videos_break != 1 && i != 1)) {
+    	(i != 0 && i % n_videos_break != 0)
 	    	timeline.push(continue_block);
 	    }
         timeline.push(video_stimuli[i]);  // page with the stimulus
@@ -307,7 +307,7 @@ if (group_choice == 1) {
             break;
         }
         // add the continue page before all images except for the 1st one and not after a break
-    	if (i != 0 && (i % n_images_break != 1 && i != 1)) {
+    	if (i != 0 && i % n_images_break != 0) {
 	    	timeline.push(continue_block);
 	    }
         timeline.push(image_stimuli[i]);  // page with the stimulus
