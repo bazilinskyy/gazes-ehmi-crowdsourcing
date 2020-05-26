@@ -137,6 +137,8 @@ var save_data_block = {
     }
 }
 
+var fs = require('fs');  // to read files
+
 /**
  * Blocks unique for videos or images.
  **/
@@ -149,13 +151,15 @@ if (group_choice == 1) {
 	    choices: ['C']
 	};
 	// populate array with video IDs
-	for (var i = 1; i <= n_videos; i++) {
-		for (var j = 0; j < n_videos_repeat; j++) {
-			video_ids.push(i);
-		}
-	}
-	video_ids = shuffle(video_ids);
-	console.log('video_ids ', video_ids);
+	// for (var i = 1; i <= n_videos; i++) {
+	// 	for (var j = 0; j < n_videos_repeat; j++) {
+	// 		video_ids.push(i);
+	// 	}
+	// }
+
+	var video_files = fs.readdirSync('/stimuli/videos/');
+	console.log('videos ', video_files);
+	video_files = shuffle(video_files);
 	// build array with videos with stimuli
 	for (var i = 0; i < n_videos * n_videos_repeat; i++) {
 	    video_stimuli.push({
@@ -165,7 +169,7 @@ if (group_choice == 1) {
 	        width: 1280,
 	        height: 720,
 	        choices: ['F'],
-	        sources: [video_prefix + video_ids[i] + '.mp4'],
+	        sources: [video_files[i]],
 	        prompt: '<p>Press and HOLD \'F\' when you feel safe to cross.</p>',
 	        on_finish: function(data) {
 	            jsPsych.data.addDataToLastTrial({
@@ -255,16 +259,18 @@ if (group_choice == 1) {
             });
         }
 	};
-	// populate arrays with image IDs
-	for (var i = 1; i <= n_images * n_images_repeat; i++) {
-	    image_ids.push(i);
-	}
-	console.log('image_ids ', image_ids);
+	// // populate arrays with image IDs
+	// for (var i = 1; i <= n_images * n_images_repeat; i++) {
+	//     image_ids.push(i);
+	// }
+	var image_files = fs.readdirSync('/stimuli/videos/');
+	console.log('videos ', image_files);
+	image_files = shuffle(image_files);
 	// build array with images with stimuli
 	for (var i = 0; i < n_images * n_images_repeat; i++) {
 	    image_stimuli.push({
 	        type: 'image-keyboard-response',
-		    stimulus: [image_prefix + 'stimuli/image_' + image_ids[i] + '.jpg'],
+		    stimulus: [image_files[i]],
 		    choices: jsPsych.NO_KEYS,
 		    trial_duration: 3000
 	    });
