@@ -210,6 +210,7 @@ if (group_choice == 1) {
 	var timeline = [];
 	timeline.push(instructions_block);
 	// iterate over blocks
+	var between_blocks_count = 0;  // counter of shown between blocks
 	for (var i = 0; i <= n_videos * n_videos_repeat; i++) {
         // add the continue page before all videos except for the 1st one
     	if (j != 0) {
@@ -223,7 +224,8 @@ if (group_choice == 1) {
         console.log(i, video_stimuli[i]);
 	    // don't add the between block after the last trial
 		if (i % n_videos_break == 0 && i / n_videos_break != 1) {
-		    timeline.push(between_blocks[i]);
+		    timeline.push(between_blocks[between_blocks_count]);
+		    between_blocks_count++;
 		}
 	}
     // save data
@@ -295,6 +297,7 @@ if (group_choice == 1) {
 	var timeline = [];
 	timeline.push(instructions_block);
 	// iterate over images
+	var between_blocks_count = 0;  // counter of shown between blocks
 	for (var i = 0; i <= n_images * n_images_repeat; i++) {
 	    // iterate over videos per block
         if (i >= n_images * n_images_repeat) {  // check if the last video was reached
@@ -311,7 +314,8 @@ if (group_choice == 1) {
         console.log(i, image_stimuli[i]);
         // don't add the between block after the last trial
 		if (i % n_images_break == 0 && i / n_images_break != 1) {
-		    timeline.push(between_blocks[i]);
+		    timeline.push(between_blocks[between_blocks_count]);
+		    between_blocks_count++;
 		}   
 	}
 	// save data
