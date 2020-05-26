@@ -212,8 +212,12 @@ if (group_choice == 1) {
 	// iterate over blocks
 	var between_blocks_count = 0;  // counter of shown between blocks
 	for (var i = 0; i <= n_videos * n_videos_repeat; i++) {
+		// check if the last video was reached
+        if (i >= n_videos * n_videos_repeat) {
+            break;
+        }
         // add the continue page before all videos except for the 1st one
-    	if (j != 0) {
+    	if (i != 0) {
 	    	timeline.push(continue_block);
 	    }
         timeline.push(image_block);  // page with an image asking to press the key
@@ -300,8 +304,8 @@ if (group_choice == 1) {
 	// iterate over images
 	var between_blocks_count = 0;  // counter of shown between blocks
 	for (var i = 0; i <= n_images * n_images_repeat; i++) {
-	    // iterate over videos per block
-        if (i >= n_images * n_images_repeat) {  // check if the last video was reached
+		// check if the last image was reached
+        if (i >= n_images * n_images_repeat) {
             break;
         }
         // add the continue page before all images except for the 1st one
