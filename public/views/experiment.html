@@ -168,11 +168,6 @@ if (group_choice == 1) {
 	        choices: jsPsych.NO_KEYS,
 	        sources: [video_prefix + video_ids[i] + '.mp4'],
 	        trial_ends_after_video: true,
-	        on_finish: function(data) {
-	            jsPsych.data.addDataToLastTrial({
-	                stimulus: video_prefix + video_ids[i] + '.mp4'
-	            });
-	        }
 	    });
 	}
 	// black with text to continue before showing the image
