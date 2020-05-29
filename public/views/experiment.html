@@ -270,8 +270,6 @@ if (group_choice == 1) {
 		    stimulus: [image_prefix + 'stimuli/image_' + image_ids[i] + '.jpg'],
 		    choices: jsPsych.NO_KEYS,
 		    trial_duration: 2000,
-		    stimulus_width: 1280,
-        	stimulus_height: 720
 	    });
 	}
 	// black with text to continue before showing the image
@@ -288,7 +286,9 @@ if (group_choice == 1) {
 	        type: 'image-keyboard-response',
 	        stimulus: image_str,
 	        choices: jsPsych.NO_KEYS,
-	        trial_duration: 400
+	        trial_duration: 400,
+		    stimulus_width: 1280,
+        	stimulus_height: 720
 	    })
 	}
 	// build between blocks
