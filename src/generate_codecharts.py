@@ -177,8 +177,8 @@ if __name__ == "__main__":
     num_codecharts = 400  # generate this many codecharts
 
     # 720p
-    image_width = 1280  # in pixel
-    image_height = 720  # in pixel
+    image_width = 1920  # in pixel
+    image_height = 1080  # in pixel
 
     # set up directories
     if not os.path.exists(rootdir):

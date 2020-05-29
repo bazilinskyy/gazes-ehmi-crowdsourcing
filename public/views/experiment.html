@@ -259,7 +259,9 @@ if (group_choice == 1) {
 	        type: 'image-keyboard-response',
 		    stimulus: [image_prefix + 'stimuli/image_' + image_ids[i] + '.jpg'],
 		    choices: jsPsych.NO_KEYS,
-		    trial_duration: 3000
+		    trial_duration: 2000,
+		    stimulus_width: 1280,
+        	stimulus_height: 720
 	    });
 	}
 	// black with text to continue before showing the image
@@ -279,6 +281,15 @@ if (group_choice == 1) {
 	        trial_duration: 400
 	    })
 	}
+	// black with text to continue before showing the image
+	var fixation_block = {
+	    type: 'image-keyboard-response',
+	    stimulus: image_prefix + 'fixation-cross.jpg',
+        choices: jsPsych.NO_KEYS,
+        trial_duration: 750,
+        stimulus_width: 1280,
+        stimulus_height: 720
+	};
 	// build between blocks
 	for (var i = 1; i < n_images * n_images_repeat / n_images_break; i++) {
 	    var images_done = n_images_break * i;
@@ -305,6 +316,7 @@ if (group_choice == 1) {
     	if (i != 0 && (i + 1) % n_break != 1) {
 	    	timeline.push(continue_block);
 	    }
+        timeline.push(fixation_block);  // page with fiexation
         timeline.push(image_stimuli[i]);  // page with the stimulus
         // gaze
         timeline.push(codechart_stimuli[i]);
