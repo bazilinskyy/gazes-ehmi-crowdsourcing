@@ -107,6 +107,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
   };
 
+// try to get group choice from URL
 var group_choice = getUrlParameter('group');
 console.log('group_choice before ', group_choice);
 if (!group_choice) {
@@ -125,17 +126,17 @@ var codechart_stimuli = []; // blocks with codecharts
 
 // fetch ducations of showing elements from URL
 var cb_dur = getUrlParameter('cb_dur');
-if (cb_dur == '') {
+if (!cb_dur) {
 	cb_dur = codeblock_duration;
 }
 
 var f_dur = getUrlParameter('f_dur');
-if (f_dur == '') {
+if (!f_dur) {
 	f_dur = fixation_duration;
 }
 
 var i_dur = getUrlParameter('i_dur');
-if (i_dur == '') {
+if (!i_dur) {
 	i_dur = image_duration;
 }
 console.log('cb_dur ', cb_dur);
