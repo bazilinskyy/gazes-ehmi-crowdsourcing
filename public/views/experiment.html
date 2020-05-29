@@ -109,21 +109,9 @@ var getUrlParameter = function getUrlParameter(sParam) {
 
 // try to get group choice from URL
 var group_choice = getUrlParameter('group');
-console.log('group_choice before ', group_choice);
 if (!group_choice) {
 	group_choice = getRandomInt(1, 2);  // group
 }
-console.log('group_choice ', group_choice);
-
-// Arrays for storing data
-var image_ids = [];  // IDs of images in stimuli
-var video_ids = [];  // IDs of videos in stimuli
-var codechart_ids = []; // IDs of codecharts
-var between_blocks = []; // instructions between blocks
-var image_stimuli = []; // blocks with images
-var video_stimuli = []; // blocks with videos
-var codechart_stimuli = []; // blocks with codecharts
-
 // fetch ducations of showing elements from URL
 var cb_dur = getUrlParameter('cb_dur');
 if (!cb_dur) {
@@ -139,9 +127,19 @@ var i_dur = getUrlParameter('i_dur');
 if (!i_dur) {
 	i_dur = image_duration;
 }
+console.log('group_choice ', group_choice);
 console.log('cb_dur ', cb_dur);
 console.log('f_dur ', f_dur);
 console.log('i_dur ', i_dur);
+
+// Arrays for storing data
+var image_ids = [];  // IDs of images in stimuli
+var video_ids = [];  // IDs of videos in stimuli
+var codechart_ids = []; // IDs of codecharts
+var between_blocks = []; // instructions between blocks
+var image_stimuli = []; // blocks with images
+var video_stimuli = []; // blocks with videos
+var codechart_stimuli = []; // blocks with codecharts
 
 /**
  * Shared blocks.
