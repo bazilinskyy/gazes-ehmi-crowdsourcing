@@ -109,7 +109,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 
 var group_choice = getUrlParameter('group');
 console.log('group_choice before ', group_choice);
-if (group_choice == '') {
+if (!group_choice) {
 	group_choice = getRandomInt(1, 2);  // group
 }
 console.log('group_choice ', group_choice);
