@@ -38,6 +38,10 @@ var n_images_break = 10; // number of images between each break
 var n_codeblocks = 400; // number of codeblock images generated
 var video_prefix = 'videos/video_'; // prefix for videos
 var image_prefix = 'img/'; // prefix for images
+var codeblock_duration = 700;
+var fixation_duration = 750;
+var image_duration = 2000;
+
 
  /**
  * Returns a random integer between min (inclusive) and max (inclusive).
@@ -87,6 +91,22 @@ function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
+/**
+ * Get parameter from URL.
+ */
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+  };
+
 var group_choice = getRandomInt(1, 2);  // group
 console.log('group_choice ', group_choice);
 
@@ -98,6 +118,22 @@ var between_blocks = []; // instructions between blocks
 var image_stimuli = []; // blocks with images
 var video_stimuli = []; // blocks with videos
 var codechart_stimuli = []; // blocks with codecharts
+
+// fetch ducations of showing elements from URL
+var cb_dur = getUrlParameter('cb_dur');
+if (cb_dur == '') {
+	cb_dur = codeblock_duration;
+}
+
+var cb_dur = getUrlParameter('f_dur');
+if (f_dur == '') {
+	f_dur = fixation_duration;
+}
+
+var i_dur = getUrlParameter('i_dur');
+if (i_dur == '') {
+	i_dur = image_duration;
+}
 
 /**
  * Shared blocks.
@@ -118,7 +154,7 @@ var fixation_block = {
     type: 'image-keyboard-response',
     stimulus: image_prefix + 'fixation-cross.jpg',
     choices: jsPsych.NO_KEYS,
-    trial_duration: 750,
+    trial_duration: f_dur,
     stimulus_width: 1280,
     stimulus_height: 720
 };
@@ -193,7 +229,7 @@ if (group_choice == 1) {
 	        type: 'image-keyboard-response',
 	        stimulus: image_str,
 	        choices: jsPsych.NO_KEYS,
-	        trial_duration: 700
+	        trial_duration: cb_dur
 	    })
 	}
 	// build between blocks
@@ -269,7 +305,7 @@ if (group_choice == 1) {
 	        type: 'image-keyboard-response',
 		    stimulus: [image_prefix + 'stimuli/image_' + image_ids[i] + '.jpg'],
 		    choices: jsPsych.NO_KEYS,
-		    trial_duration: 2000,
+		    trial_duration: i_dur,
 	    });
 	}
 	// black with text to continue before showing the image
@@ -286,7 +322,7 @@ if (group_choice == 1) {
 	        type: 'image-keyboard-response',
 	        stimulus: image_str,
 	        choices: jsPsych.NO_KEYS,
-	        trial_duration: 700
+	        trial_duration: cb_dur
 	    })
 	}
 	// build between blocks
