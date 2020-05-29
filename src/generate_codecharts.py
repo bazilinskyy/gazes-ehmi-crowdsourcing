@@ -21,7 +21,7 @@ tojitter = True  # add jitter from a regular grid
 ebuf = 5
 # if want to make sure to sample triplets to the very edge of the image
 # (downside: triplets may be more crowded)
-go_to_image_edges = False
+go_to_image_edges = True
 
 
 def point_to_pixel(num):
@@ -176,9 +176,13 @@ if __name__ == "__main__":
     rootdir = '../public/img/codeboard'
     num_codecharts = 400  # generate this many codecharts
 
+    # # 1080p
+    # image_width = 1920  # in pixel
+    # image_height = 1080  # in pixel
+
     # 720p
-    image_width = 1920  # in pixel
-    image_height = 1080  # in pixel
+    image_width = 1280  # in pixel
+    image_height = 720  # in pixel
 
     # set up directories
     if not os.path.exists(rootdir):
