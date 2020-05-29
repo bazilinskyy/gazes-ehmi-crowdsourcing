@@ -38,7 +38,7 @@ var n_images_break = 10; // number of images between each break
 var n_codeblocks = 400; // number of codeblock images generated
 var video_prefix = 'videos/video_'; // prefix for videos
 var image_prefix = 'img/'; // prefix for images
-var codeblock_duration = 700;
+var codeblock_duration = 1000;
 var fixation_duration = 750;
 var image_duration = 2000;
 
@@ -107,7 +107,10 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
   };
 
-var group_choice = getRandomInt(1, 2);  // group
+var group_choice = getUrlParameter('group');
+if (group_choice == '') {
+	group_choice = getRandomInt(1, 2);  // group
+}
 console.log('group_choice ', group_choice);
 
 // Arrays for storing data
