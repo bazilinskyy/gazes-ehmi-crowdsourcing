@@ -29,14 +29,10 @@
 /**
  * Constants.
  **/
-var n_images = 24; // number of images
-var n_videos = 24; // number of videos
-var n_videos_repeat = 2; // number of repeats of each condition
-var n_images_repeat = 2; // number of repeats of each condition
-var n_videos_break = 10; // number of videos between each break
+var n_images = 9; // number of images
+var n_images_repeat = 5; // number of repeats of each condition
 var n_images_break = 10; // number of images between each break
 var n_codeblocks = 400; // number of codeblock images generated
-var video_prefix = 'videos/video_'; // prefix for videos
 var image_prefix = 'img/'; // prefix for images
 var codeblock_duration = 1000;
 var fixation_duration = 750;
@@ -110,7 +106,8 @@ var getUrlParameter = function getUrlParameter(sParam) {
 // try to get group choice from URL
 var group_choice = getUrlParameter('group');
 if (!group_choice) {
-	group_choice = getRandomInt(1, 2);  // group
+	// group_choice = getRandomInt(1, 2);  // group
+	group_choice = 1;  // hardcode 1 gorup
 }
 // fetch ducations of showing elements from URL
 var cb_dur = getUrlParameter('cb_dur');
@@ -134,11 +131,9 @@ console.log('i_dur ', i_dur);
 
 // Arrays for storing data
 var image_ids = [];  // IDs of images in stimuli
-var video_ids = [];  // IDs of videos in stimuli
 var codechart_ids = []; // IDs of codecharts
 var between_blocks = []; // instructions between blocks
 var image_stimuli = []; // blocks with images
-var video_stimuli = []; // blocks with videos
 var codechart_stimuli = []; // blocks with codecharts
 
 /**
@@ -184,209 +179,104 @@ var save_data_block = {
     }
 }
 
-/**
- * Blocks unique for videos or images.
- **/
-// videos
-if (group_choice == 1) {
-	// define instructions block
-	var instructions_block = {
-	    type: 'html-keyboard-response',
-	    stimulus: '<p>You will view ' + n_videos * n_videos_repeat + ' videos. Right after each video, a page with codes will be shown briefly. You will be asked to input a code that you remember looking at last. Please pay attention when the page with the codes is shown, as you will have to input a valid code to proceed to the next page. After each ' + n_videos_break + ' videos you will be able to take a short break. The window of your browser should be at least 1300px wide and 800px tall. Press \'C\' to proceed to first video. </p>',
-	    choices: ['C'],
-        on_finish: function(data) {
-            jsPsych.data.addDataToLastTrial({
-                worker_code: finish_code
-            });
-        }
-	};
-	// populate array with video IDs
-	for (var i = 1; i <= n_videos; i++) {
-		for (var j = 0; j < n_videos_repeat; j++) {
-			video_ids.push(i);
-		}
+// define instructions block
+var instructions_block = {
+    type: 'html-keyboard-response',
+    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' images. Right after each image, a page with codes will be shown briefly. You will be asked to input a code that you remember looking at last. Please pay attention when the page with the codes is shown, as you will have to input a valid code to proceed to the next page. After each ' + n_images_break + ' images you will be able to take a short break. Press \'C\' to proceed to the first image. </p>',
+    choices: ['C'],
+    on_finish: function(data) {
+        jsPsych.data.addDataToLastTrial({
+            worker_code: finish_code
+        });
+    }
+};
+// populate arrays with image IDs
+for (var i = 1; i <= n_images; i++) {
+	for (var j = 1; j <= n_images_repeat; j++) { 
+	    image_ids.push(i);
 	}
-	video_ids = shuffle(video_ids);  // shuffle IDs
-	console.log('video_ids ', video_ids);
-	// build array with videos with stimuli
-	for (var i = 0; i < n_videos * n_videos_repeat; i++) {
-	    video_stimuli.push({
-        	type: 'video-keyboard-multiple-responses-release',
-	        autoplay: true,
-	        controls: false,
-	        width: 1280,
-	        height: 720,
-	        choices: jsPsych.NO_KEYS,
-	        sources: [video_prefix + video_ids[i] + '.mp4'],
-	        trial_ends_after_video: true,
-	    });
-	}
-	// black with text to continue before showing the image
-	var continue_block = {
-	    type: 'html-keyboard-response',
-	    stimulus: '<p>Press \'C\' to continue to the next video.</p>',
-	    choices: ['C']
-	};
-	// gazes
-	// build array with codecharts
-	for (var i = 0; i < n_videos * n_videos_repeat; i++) {
-	    image_str = image_prefix + 'codeboard/cb_' + codechart_ids[i] + '.jpg';
-	    codechart_stimuli.push({
-	        type: 'image-keyboard-response',
-	        stimulus: image_str,
-	        choices: jsPsych.NO_KEYS,
-	        trial_duration: cb_dur
-	    })
-	}
-	// build between blocks
-	for (var i = 1; i < n_videos * n_videos_repeat / n_videos_break; i++) {
-	    var videos_done = n_videos_break * i;
-	    between_blocks.push({
-	        type: 'html-keyboard-response',
-	        stimulus: '<p>You have now completed ' + videos_done + ' videos out of ' + n_videos * n_videos_repeat + '. When ready press \'C\' to proceed to the next batch.</p>',
-	        choices: ['C']
-	    });
-	}
-
-	/**
-	 * Create experiment timeline array
-	 **/
-	var timeline = [];
-	timeline.push(instructions_block);
-	// iterate over blocks
-	var between_blocks_count = 0;  // counter of shown between blocks
-	for (var i = 0; i <= n_videos * n_videos_repeat; i++) {
-		// check if the last video was reached
-        if (i >= n_videos * n_videos_repeat) {
-            break;
-        }
-        // add the continue page before all videos except for the 1st one
-    	if (i != 0 && (i + 1) % n_videos_break != 1) {
-	    	timeline.push(continue_block);
-	    }
-	    timeline.push(fixation_block);  // page with fiexation
-        timeline.push(video_stimuli[i]);  // page with the stimulus
-        // gaze
-        timeline.push(codechart_stimuli[i]);
-        timeline.push(codechart_input_block);
-        console.log(i, i % n_videos_break, i + 1 % n_videos_break, video_stimuli[i]);
-	    // don't add the between block after the last trial
-		if ((i + 1) % n_videos_break == 0 && i != 0) {
-			console.log('added break', i, between_blocks[between_blocks_count], i % n_videos_break, i / n_videos_break);
-		    timeline.push(between_blocks[between_blocks_count]);
-		    between_blocks_count++;
-		}
-	}
-    // save data
-    timeline.push(save_data_block);
-	console.log(video_ids);
-	console.log(between_blocks);
-	console.log(video_stimuli);
-	console.log(timeline);
-	console.log(codechart_stimuli);
-
-} else if (group_choice == 2) { // images
-	// define instructions block
-	var instructions_block = {
-	    type: 'html-keyboard-response',
-	    stimulus: '<p>You will view ' + n_images * n_images_repeat + ' images. Right after each image, a page with codes will be shown briefly. You will be asked to input a code that you remember looking at last. Please pay attention when the page with the codes is shown, as you will have to input a valid code to proceed to the next page. After each ' + n_images_break + ' images you will be able to take a short break. Press \'C\' to proceed to the first image. </p>',
-	    choices: ['C'],
-	    on_finish: function(data) {
-            jsPsych.data.addDataToLastTrial({
-                worker_code: finish_code
-            });
-        }
-	};
-	// populate arrays with image IDs
-	for (var i = 1; i <= n_images; i++) {
-		for (var j = 1; j <= n_images_repeat; j++) { 
-		    image_ids.push(i);
-		}
-	}
-	image_ids = shuffle(image_ids);  // shuffle IDs
-	console.log('image_ids ', image_ids);
-	// build array with images with stimuli
-	for (var i = 0; i < n_images * n_images_repeat; i++) {
-	    image_stimuli.push({
-	        type: 'image-keyboard-response',
-		    stimulus: [image_prefix + 'stimuli/image_' + image_ids[i] + '.jpg'],
-		    choices: jsPsych.NO_KEYS,
-		    trial_duration: i_dur,
-	    });
-	}
-	// black with text to continue before showing the image
-	var continue_block = {
-	    type: 'html-keyboard-response',
-	    stimulus: '<p>Press \'C\' to continue to the next image.</p>',
-	    choices: ['C']
-	};
-	// gazes
-	// build array with codecharts
-	for (var i = 0; i < n_images * n_images_repeat; i++) {
-	    image_str = image_prefix + 'codeboard/cb_' + codechart_ids[i] + '.jpg';
-	    codechart_stimuli.push({
-	        type: 'image-keyboard-response',
-	        stimulus: image_str,
-	        choices: jsPsych.NO_KEYS,
-	        trial_duration: cb_dur
-	    })
-	}
-	// build between blocks
-	for (var i = 1; i < n_images * n_images_repeat / n_images_break; i++) {
-	    var images_done = n_images_break * i;
-	    between_blocks.push({
-	        type: 'html-keyboard-response',
-	        stimulus: '<p>You have now completed ' + images_done + ' images out of ' + n_images * n_images_repeat + '. When ready press \'C\' to proceed to the next batch.</p>',
-	        choices: ['C']
-	    });
-	}
-
-	/**
- 	* Create experiment timeline array
-	 **/
-	var timeline = [];
-	timeline.push(instructions_block);
-	// iterate over images
-	var between_blocks_count = 0;  // counter of shown between blocks
-	for (var i = 0; i <= n_images * n_images_repeat; i++) {
-		// check if the last image was reached
-        if (i >= n_images * n_images_repeat) {
-            break;
-        }
-        // add the continue page before all images except for the 1st one
-    	if (i != 0 && (i + 1) % n_images_break != 1) {
-	    	timeline.push(continue_block);
-	    }
-        timeline.push(fixation_block);  // page with fiexation
-        timeline.push(image_stimuli[i]);  // page with the stimulus
-        // gaze
-        timeline.push(codechart_stimuli[i]);
-        timeline.push(codechart_input_block);
-        console.log(i, image_stimuli[i]);
-        // don't add the between block after the last trial
-		if ((i + 1) % n_images_break == 0 && i != 0) {
-			console.log('added break', i, between_blocks[between_blocks_count], i % n_images_break, i / n_images_break);
-		    timeline.push(between_blocks[between_blocks_count]);
-		    between_blocks_count++;
-		}   
-	}
-	// save data
-	timeline.push(save_data_block);
-
-	console.log(image_ids);
-	console.log(image_stimuli);
-	console.log(timeline);
-	console.log(codechart_stimuli);
-	console.log(between_blocks);
-} else {
-	console.error('Wrong group_choice ', group_choice);
 }
+image_ids = shuffle(image_ids);  // shuffle IDs
+console.log('image_ids ', image_ids);
+// build array with images with stimuli
+for (var i = 0; i < n_images * n_images_repeat; i++) {
+    image_stimuli.push({
+        type: 'image-keyboard-response',
+	    stimulus: [image_prefix + 'stimuli/image_' + image_ids[i] + '.jpg'],
+	    choices: jsPsych.NO_KEYS,
+	    trial_duration: i_dur,
+    });
+}
+// black with text to continue before showing the image
+var continue_block = {
+    type: 'html-keyboard-response',
+    stimulus: '<p>Press \'C\' to continue to the next image.</p>',
+    choices: ['C']
+};
+// gazes
+// build array with codecharts
+for (var i = 0; i < n_images * n_images_repeat; i++) {
+    image_str = image_prefix + 'codeboard/cb_' + codechart_ids[i] + '.jpg';
+    codechart_stimuli.push({
+        type: 'image-keyboard-response',
+        stimulus: image_str,
+        choices: jsPsych.NO_KEYS,
+        trial_duration: cb_dur
+    })
+}
+// build between blocks
+for (var i = 1; i < n_images * n_images_repeat / n_images_break; i++) {
+    var images_done = n_images_break * i;
+    between_blocks.push({
+        type: 'html-keyboard-response',
+        stimulus: '<p>You have now completed ' + images_done + ' images out of ' + n_images * n_images_repeat + '. When ready press \'C\' to proceed to the next batch.</p>',
+        choices: ['C']
+    });
+}
+
+/**
+	* Create experiment timeline array
+ **/
+var timeline = [];
+timeline.push(instructions_block);
+// iterate over images
+var between_blocks_count = 0;  // counter of shown between blocks
+for (var i = 0; i <= n_images * n_images_repeat; i++) {
+	// check if the last image was reached
+    if (i >= n_images * n_images_repeat) {
+        break;
+    }
+    // add the continue page before all images except for the 1st one
+	if (i != 0 && (i + 1) % n_images_break != 1) {
+    	timeline.push(continue_block);
+    }
+    timeline.push(fixation_block);  // page with fiexation
+    timeline.push(image_stimuli[i]);  // page with the stimulus
+    // gaze
+    timeline.push(codechart_stimuli[i]);
+    timeline.push(codechart_input_block);
+    console.log(i, image_stimuli[i]);
+    // don't add the between block after the last trial
+	if ((i + 1) % n_images_break == 0 && i != 0) {
+		console.log('added break', i, between_blocks[between_blocks_count], i % n_images_break, i / n_images_break);
+	    timeline.push(between_blocks[between_blocks_count]);
+	    between_blocks_count++;
+	}   
+}
+// save data
+timeline.push(save_data_block);
+
+console.log(image_ids);
+console.log(image_stimuli);
+console.log(timeline);
+console.log(codechart_stimuli);
+console.log(between_blocks);
 
 /* Start the experiment */
 jsPsych.init({
 	// auto_preload: false,
     show_preload_progress_bar: true,
-    preload_images: [image_prefix + 'black_frame.png', image_prefix + 'fixation-cross.jpg'],
+    preload_images: [image_prefix + 'fixation-cross.jpg'],
     timeline: timeline,
     max_load_time: 3000000,
     on_finish: function() {
