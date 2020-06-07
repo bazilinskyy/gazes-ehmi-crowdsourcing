@@ -37,7 +37,7 @@ var image_prefix = 'img/'; // prefix for images
 var codeblock_duration = 1000;
 var fixation_duration = 750;
 var image_duration = 1000;
-
+var SHOW_DEBUG = false; // switch for debugging output
 
  /**
  * Returns a random integer between min (inclusive) and max (inclusive).
@@ -124,10 +124,18 @@ var i_dur = getUrlParameter('i_dur');
 if (!i_dur) {
 	i_dur = image_duration;
 }
-console.log('group_choice ', group_choice);
-console.log('cb_dur ', cb_dur);
-console.log('f_dur ', f_dur);
-console.log('i_dur ', i_dur);
+
+var debug = getUrlParameter('debug');
+if (!debug) {
+    debug = SHOW_DEBUG;
+}
+
+if (debug) {
+	console.log('group_choice ', group_choice);
+	console.log('cb_dur ', cb_dur);
+	console.log('f_dur ', f_dur);
+	console.log('i_dur ', i_dur);
+}
 
 // Arrays for storing data
 var image_ids = [];  // IDs of images in stimuli
@@ -136,15 +144,79 @@ var between_blocks = []; // instructions between blocks
 var image_stimuli = []; // blocks with images
 var codechart_stimuli = []; // blocks with codecharts
 
-/**
- * Shared blocks.
- **/
+// browser info
+// https://stackoverflow.com/questions/11219582/how-to-detect-my-browser-version-and-operating-system-using-javascript
+var nVer = navigator.appVersion;
+var nAgt = navigator.userAgent;
+var br_name  = navigator.appName;
+var br_full_version  = ''+parseFloat(navigator.appVersion); 
+var br_major_version = parseInt(navigator.appVersion,10);
+var nameOffset,verOffset,ix;
+
+// In Opera, the true version is after "Opera" or after "Version"
+if ((verOffset=nAgt.indexOf("Opera"))!=-1) {
+ br_name = "Opera";
+ br_full_version = nAgt.substring(verOffset+6);
+ if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+   br_full_version = nAgt.substring(verOffset+8);
+}
+// In MSIE, the true version is after "MSIE" in userAgent
+else if ((verOffset=nAgt.indexOf("MSIE"))!=-1) {
+ br_name = "Microsoft Internet Explorer";
+ br_full_version = nAgt.substring(verOffset+5);
+}
+// In Chrome, the true version is after "Chrome" 
+else if ((verOffset=nAgt.indexOf("Chrome"))!=-1) {
+ br_name = "Chrome";
+ br_full_version = nAgt.substring(verOffset+7);
+}
+// In Safari, the true version is after "Safari" or after "Version" 
+else if ((verOffset=nAgt.indexOf("Safari"))!=-1) {
+ br_name = "Safari";
+ br_full_version = nAgt.substring(verOffset+7);
+ if ((verOffset=nAgt.indexOf("Version"))!=-1) 
+   br_full_version = nAgt.substring(verOffset+8);
+}
+// In Firefox, the true version is after "Firefox" 
+else if ((verOffset=nAgt.indexOf("Firefox"))!=-1) {
+ browserName = "Firefox";
+ br_full_version = nAgt.substring(verOffset+8);
+}
+// In most other browsers, "name/version" is at the end of userAgent 
+else if ( (nameOffset=nAgt.lastIndexOf(' ')+1) < 
+          (verOffset=nAgt.lastIndexOf('/')) ) 
+{
+ browserName = nAgt.substring(nameOffset,verOffset);
+ br_full_version = nAgt.substring(verOffset+1);
+ if (browserName.toLowerCase()==browserName.toUpperCase()) {
+  browserName = navigator.appName;
+ }
+}
+// trim the br_full_version string at semicolon/space if present
+if ((ix=br_full_version.indexOf(";"))!=-1)
+   br_full_version=br_full_version.substring(0,ix);
+if ((ix=br_full_version.indexOf(" "))!=-1)
+   br_full_version=br_full_version.substring(0,ix);
+
+br_major_version = parseInt(''+br_full_version,10);
+if (isNaN(br_major_version)) {
+ br_full_version  = ''+parseFloat(navigator.appVersion); 
+ br_major_version = parseInt(navigator.appVersion,10);
+}
+
+if (debug) {
+    console.log('browser name', br_name);
+    console.log('browser full version', br_full_version);
+    console.log('browser major version', br_major_version);
+    console.log('browser navigator.appName', navigator.appName);
+    console.log('browser navigator.userAgent', navigator.userAgent);
+}
+
 // populate array with codechart IDs
 for (var i = 0; i < n_codeblocks; i++) {
     codechart_ids.push(i);
 }
 codechart_ids = shuffle(codechart_ids);  // shuffle codechart blocks
-console.log('codechart_ids ', codechart_ids);
 // block for input of code
 var codechart_input_block = {
     type: 'survey-html-form',
@@ -186,7 +258,12 @@ var instructions_block = {
     choices: ['C'],
     on_finish: function(data) {
         jsPsych.data.addDataToLastTrial({
-            worker_code: finish_code
+            worker_code: finish_code,
+            browser_name: br_name,
+            browser_full_version: br_full_version,
+            browser_major_version: br_major_version,
+            browser_app_name: navigator.appName,
+            browser_user_agent: navigator.userAgent
         });
     }
 };
@@ -197,7 +274,6 @@ for (var i = 1; i <= n_images; i++) {
 	}
 }
 image_ids = shuffle(image_ids);  // shuffle IDs
-console.log('image_ids ', image_ids);
 // build array with images with stimuli
 for (var i = 0; i < n_images * n_images_repeat; i++) {
     image_stimuli.push({
@@ -255,10 +331,14 @@ for (var i = 0; i <= n_images * n_images_repeat; i++) {
     // gaze
     timeline.push(codechart_stimuli[i]);
     timeline.push(codechart_input_block);
-    console.log(i, image_stimuli[i]);
+    if (debug) {
+	    console.log(i, image_stimuli[i]);
+	}
     // don't add the between block after the last trial
 	if ((i + 1) % n_images_break == 0 && i != 0) {
-		console.log('added break', i, between_blocks[between_blocks_count], i % n_images_break, i / n_images_break);
+		if (debug) {
+			console.log('added break', i, between_blocks[between_blocks_count], i % n_images_break, i / n_images_break);
+		}
 	    timeline.push(between_blocks[between_blocks_count]);
 	    between_blocks_count++;
 	}   
@@ -266,11 +346,14 @@ for (var i = 0; i <= n_images * n_images_repeat; i++) {
 // save data
 timeline.push(save_data_block);
 
-console.log(image_ids);
-console.log(image_stimuli);
-console.log(timeline);
-console.log(codechart_stimuli);
-console.log(between_blocks);
+if (debug) {
+	console.log('image_ids', image_ids);
+	console.log('image_stimuli', image_stimuli);
+	console.log('timeline', timeline);
+	console.log('between_blocks', between_blocks);
+	console.log('codechart_ids', codechart_ids);
+	console.log('codechart_stimuli', codechart_stimuli);
+}
 
 /* Start the experiment */
 jsPsych.init({
