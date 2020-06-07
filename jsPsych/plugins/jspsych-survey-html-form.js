@@ -88,6 +88,9 @@ jsPsych.plugins['survey-html-form'] = (function() {
       jsPsych.finishTrial(trialdata);
     });
 
+    // hardcode autofocus
+    $("#input-codeblock").focus();
+
     var startTime = performance.now();
   };
 
