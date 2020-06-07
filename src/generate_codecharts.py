@@ -12,7 +12,7 @@ import math
 # DEFINE PARAMATERS
 # letters to not use in code charts because can be confused with digits
 forbidden_letters = set(["I", "O"])
-px_pt_ratio = 20/29  # according to our image dimensions, 29 point = 20 px
+px_pt_ratio = 20 / 29  # according to our image dimensions, 29 point = 20 px
 text_color = ImageColor.getrgb("gray")
 font_type = "Arial.ttf"
 tojitter = True  # add jitter from a regular grid
@@ -25,11 +25,11 @@ go_to_image_edges = True
 
 
 def point_to_pixel(num):
-    return int(num*px_pt_ratio)
+    return int(num * px_pt_ratio)
 
 
 def pixel_to_point(num):
-    return int(num*(1/px_pt_ratio))
+    return int(num * (1 / px_pt_ratio))
 
 
 def generate_rand_letter():
@@ -55,7 +55,7 @@ def generate_rand_triplet():
 
 
 def create_codechart(filename, image_width, image_height):
-    font_size = int(image_height*0.0185)
+    font_size = int(image_height * 0.0185)
 
     # all these parameters depend on font size
     # in pixel - max triplet width; used 'W88' as widest triplet code
@@ -71,15 +71,15 @@ def create_codechart(filename, image_width, image_height):
     # make sure that not too much empty space is left over by spacing out
     # triplets
     # number of triplets that will be tiled horizontally
-    N_h = int(math.floor((image_width - max_triplet_width - 2 * ebuf) /
-              float(d_h)))
+    N_h = int(math.floor((image_width - max_triplet_width - 2 * ebuf)
+              / float(d_h)))
     # recompute the horizontal dist between triplets to eliminate extra space
-    d_h = int(math.floor((image_width - max_triplet_width - 2 * ebuf) /
-              float(N_h)))
-    N_v = int(math.floor((image_height - max_triplet_height-2 * ebuf) /
-              float(d_v)))
-    d_v = int(math.floor((image_height - max_triplet_height - 2 * ebuf) /
-              float(N_v)))
+    d_h = int(math.floor((image_width - max_triplet_width - 2 * ebuf)
+              / float(N_h)))
+    N_v = int(math.floor((image_height - max_triplet_height - 2 * ebuf)
+              / float(d_v)))
+    d_v = int(math.floor((image_height - max_triplet_height - 2 * ebuf)
+              / float(N_v)))
     # -------------
     # small buffer to cover edge case of triplets immediately adjacent to one
     # another (for legibility)
@@ -113,16 +113,16 @@ def create_codechart(filename, image_width, image_height):
     # the grid spacing between consecutive triplets
     # was always similar (despite a small bit of jitter added when using the
     # triplet)
-    xoffset = random.choice(list(range(int(d_h/2.0))))
-    yoffset = random.choice(list(range(int(d_v/2.0))))
-    x_init = x_init+xoffset
-    y_init = y_init+yoffset
+    xoffset = random.choice(list(range(int(d_h / 2.0))))
+    yoffset = random.choice(list(range(int(d_v / 2.0))))
+    x_init = x_init + xoffset
+    y_init = y_init + yoffset
     # -----------------------------------------------------------------------
 
     x = x_init
-    while x < image_width-max_triplet_width-ebuf:
+    while x < image_width - max_triplet_width - ebuf:
         y = y_init
-        while y < image_height-max_triplet_height-ebuf:
+        while y < image_height - max_triplet_height - ebuf:
             triplet_code = generate_rand_triplet()
 
             # check for if triplet has already been used in image since all
@@ -134,11 +134,11 @@ def create_codechart(filename, image_width, image_height):
             if tojitter:
                 # implement jitter to x and y coordinates
                 # (note: can turn either of them off)
-                min_x = max(ebuf, x-j_h)
-                max_x = min(x+j_h+1, image_width-max_triplet_width-ebuf)
-                min_y = max(ebuf, y-j_v)
+                min_x = max(ebuf, x - j_h)
+                max_x = min(x + j_h + 1, image_width - max_triplet_width - ebuf)
+                min_y = max(ebuf, y - j_v)
                 # a little bit of extra buffer in vertical dimension
-                max_y = min(y+j_v+1, image_height-max_triplet_height-ebuf-2)
+                max_y = min(y + j_v + 1, image_height - max_triplet_height - ebuf - 2)
                 x_range = list(range(min_x, max_x))
                 y_range = list(range(min_y, max_y))
                 j_x = random.choice(x_range)
@@ -152,20 +152,20 @@ def create_codechart(filename, image_width, image_height):
             coordinates[triplet_code] = (j_x, j_y)
 
             y_prev = y
-            y = y+d_v  # regularly sample the image vertically
+            y = y + d_v  # regularly sample the image vertically
 
             # triplets are not guaranteed to go to edge of image,
             # and gap could be large
             # see if can still squeeze in a triplet without overlapping
             # previous ones (could still be quite close)
-            if go_to_image_edges and y >= image_height-max_triplet_height-ebuf:
-                y = y_prev + max_triplet_height+j_v+1 + post_jitter_buffer*2
+            if go_to_image_edges and y >= image_height - max_triplet_height - ebuf:
+                y = y_prev + max_triplet_height + j_v + 1 + post_jitter_buffer * 2
 
         x_prev = x
-        x = x+d_h  # regularly sample the image horizontally
+        x = x + d_h  # regularly sample the image horizontally
 
-        if go_to_image_edges and x >= image_width-max_triplet_width-ebuf:
-            x = x_prev + max_triplet_width+j_h+1 + post_jitter_buffer*2
+        if go_to_image_edges and x >= image_width - max_triplet_width - ebuf:
+            x = x_prev + max_triplet_width + j_h + 1 + post_jitter_buffer * 2
 
     img.save(filename)
     return (list(valid_codes), coordinates)
