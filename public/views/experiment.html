@@ -6,9 +6,9 @@
     <script src='jsPsych/jspsych.js'></script>
     <script src='jsPsych/plugins/jspsych-html-keyboard-response.js'></script>
     <script src='jsPsych/plugins/jspsych-call-function.js'></script>
-    <script src='jsPsych/plugins/jspsych-video-keyboard-multiple-responses-release.js'></script>
     <script src='jsPsych/plugins/jspsych-survey-html-form.js'></script>
     <script src='jsPsych/plugins/jspsych-image-keyboard-response.js'></script>
+    <script src='jsPsych/plugins/jspsych-survey-multi-choice.js'></script>
     <link href='jsPsych/css/jspsych.css' rel='stylesheet' type='text/css'></link>
     <link href='css/experiment.css' rel='stylesheet' type='text/css'></link>
     <link rel='icon' type='image/png' href='/img/favicon.png' />
@@ -314,12 +314,6 @@ for (var i = 1; i < n_images * n_images_repeat / n_images_break; i++) {
     var images_done = n_images_break * i;
     between_blocks.push({
         type: 'html-keyboard-response',
-        stimulus: '<p>You have now completed ' + images_done + ' images out of ' + n_images * n_images_repeat + '. When ready press \'C\' to proceed to the next batch.</p>',
-        choices: ['C']
-    });
-}
-
-/**
 	* Create experiment timeline array
  **/
 var timeline = [];
