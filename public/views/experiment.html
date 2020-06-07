@@ -29,14 +29,14 @@
 /**
  * Constants.
  **/
-var n_images = 9; // number of images
-var n_images_repeat = 5; // number of repeats of each condition
-var n_images_break = 10; // number of images between each break
+var n_images = 180; // number of images
+var n_images_repeat = 1; // number of repeats of each condition
+var n_images_break = 30; // number of images between each break
 var n_codeblocks = 400; // number of codeblock images generated
 var image_prefix = 'img/'; // prefix for images
 var codeblock_duration = 1000;
 var fixation_duration = 750;
-var image_duration = 2000;
+var image_duration = 1000;
 
 
  /**
@@ -101,7 +101,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
     }
-  };
+};
 
 // try to get group choice from URL
 var group_choice = getUrlParameter('group');
