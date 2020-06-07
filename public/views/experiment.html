@@ -231,6 +231,15 @@ var fixation_block = {
     stimulus_width: 1280,
     stimulus_height: 720
 };
+
+// block with text question in the end of the study
+var question_block = {
+    type: 'survey-multi-choice',
+    questions: [
+      {prompt: "In the situation on the image that you just saw, would you brake or continue pedaling as a cyclist?", options: ["Brake", "Continue pedaling"], required: true, horizontal: true,}
+    ],
+};
+
 // block for sending data
 var save_data_block = {
     type: 'call-function',
@@ -331,6 +340,7 @@ for (var i = 0; i <= n_images * n_images_repeat; i++) {
     // gaze
     timeline.push(codechart_stimuli[i]);
     timeline.push(codechart_input_block);
+    timeline.push(question_block);
     if (debug) {
 	    console.log(i, image_stimuli[i]);
 	}
